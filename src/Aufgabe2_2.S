@@ -21,24 +21,29 @@ main:
     rcall _loopLeft
 ;*******************************running light********************************
     _loopRightbefore:
+        rcall wait_400ms
+        rcall setLED
         ror LED_COUNTER
-        
-        
         _loopRight:
             rcall wait_400ms
             rcall setLED
             lsr LED_COUNTER
             brcs _loopLeftBefore
         rjmp _loopRight
+
+    ret
     _loopLeftBefore:
+        rcall wait_400ms
+        rcall setLED
         rol LED_COUNTER
-        
         _loopLeft:
             rcall wait_400ms
             rcall setLED
             lsl LED_COUNTER
             brcs _loopRightbefore
         rjmp _loopLeft
+    ret
+
     ;****************************OUT LED*****************************************
     setLED:
         
