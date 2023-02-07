@@ -30,7 +30,6 @@ main:
     rcall setLED
     
     _mloop:
-         
         rcall wait_10ms
         rcall setLED
         ;increment LED_COUNTER
