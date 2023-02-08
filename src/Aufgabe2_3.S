@@ -27,15 +27,16 @@ main:
     rcall setLED
 
     cli
-    ldi TEMP, 0x4F
+    ;Interrupt alle 2 sec
+    ldi TEMP, 0x7A
     STS OCR1AH, TEMP
-    ldi TEMP, 0x09
+    ldi TEMP, 0x11
     STS OCR1AL, TEMP
     ; CTC Modus einschalten
     ldi TEMP, (1 << WGM12)
     STS TCCR1B, TEMP 
     ; Vorteiler auf 1024
-    ldi TEMP, (1 << CS12) | ( 1 << CS10 )
+    ldi TEMP, (1 << CS12) | (0 << CS11) | (1 >> CS10)
     STS TCCR1B, TEMP
 
     ldi TEMP, (1 << OCIE1A) ; OCIE1A: Interrupt bei Timer Compare
