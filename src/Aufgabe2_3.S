@@ -27,9 +27,9 @@ main:
     rcall setLED
 
     cli
-    ldi r25, 0x4F
+    ldi TEMP, 0x4F
     STS OCR1AH, TEMP
-    ldi r24, 0x09
+    ldi TEMP, 0x09
     STS OCR1AL, TEMP
     ; CTC Modus einschalten
     ldi TEMP, (1 << WGM12)
@@ -42,12 +42,8 @@ main:
     STS TIMSK1, TEMP
     sei
 
-    
-    
     LOOP:
         rjmp LOOP
-
-
 
 setLED:
         ;One’s Complement
