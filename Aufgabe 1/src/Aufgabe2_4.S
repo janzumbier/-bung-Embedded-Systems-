@@ -17,30 +17,20 @@
 ;define a name for Register 16 and 17
 #define TEMP R16
 #define LED_COUNTER R17
-#define isInterupt R18
+#define isInterupt R20
 
 .global INT0_vect
 INT0_vect:
     ;check if inter allready set
     cpi isInterupt, 1
-    breq getOut
+    breq endInt
     ;set the interrupt boolean
     ldi isInterupt, 1
-    
-    _loopInt0:
-        ;checks if isInterrupt = 0 =>getOut or 1 => stay in loop
-        cpi isInterupt, 0
-        breq getOut 
-    rjmp _loopInt0
+        reti
 
-    getOut:
+    endInt:
         ldi isInterupt, 0
-reti
-
-.global INT1_vect
-INT1_vect:
-    clr isInterupt
-    reti
+        reti
 
 ;******************************* MAIN ************************************
 .global main
@@ -71,6 +61,10 @@ main:
         ror LED_COUNTER
         _loopRight:
             rcall wait_400ms
+            cpi isInterupt, 1
+            brne noInt
+            rcall _loopInt0
+        noInt:
             rcall setLED
             lsr LED_COUNTER
             brcs _loopLeftBefore
@@ -83,6 +77,10 @@ main:
         rol LED_COUNTER
         _loopLeft:
             rcall wait_400ms
+            cpi isInterupt, 1
+            brne noInt2
+            rcall _loopInt0
+        noInt2:
             rcall setLED
             lsl LED_COUNTER
             brcs _loopRightbefore
@@ -118,3 +116,9 @@ main:
         brne aloop
     ret
 
+_loopInt0:
+        ;checks if isInterrupt = 0 =>getOut or 1 => stay in loop
+        cpi isInterupt, 0
+        breq getOut 
+        rjmp _loopInt0
+getOut: ret
