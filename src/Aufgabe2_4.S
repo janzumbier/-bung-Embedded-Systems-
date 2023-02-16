@@ -26,7 +26,12 @@ INT0_vect:
     breq getOut
     ;set the interrupt boolean
     ldi isInterupt, 1
-    rcall _loopInt0
+    
+    _loopInt0:
+        ;checks if isInterrupt = 0 =>getOut or 1 => stay in loop
+        cpi isInterupt, 0
+        breq getOut 
+    rjmp _loopInt0
 
     getOut:
         ldi isInterupt, 0
@@ -36,7 +41,6 @@ reti
 INT1_vect:
     clr isInterupt
     reti
-
 
 ;******************************* MAIN ************************************
 .global main
@@ -114,8 +118,3 @@ main:
         brne aloop
     ret
 
-_loopInt0:
-        ;checks if isInterrupt = 0 =>getOut or 1 => stay in loop
-        cpi isInterupt, 0
-        breq getOut 
-    rjmp _loopInt0
