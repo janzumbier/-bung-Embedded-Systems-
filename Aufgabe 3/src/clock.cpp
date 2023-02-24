@@ -71,11 +71,11 @@ void changeTime(){
     counter ++;
     counter = counter % 86400;
     setTimeToLed();
-    tone(11, 1);
 }
 
 void confirmTime(){
     leave_loop = 1;
+    tone(11, 1, 1870);
 }
 
 void setTimeToLed(){
