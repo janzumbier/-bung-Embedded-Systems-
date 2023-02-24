@@ -6,11 +6,15 @@
 #include <Arduino.h>
 #include <avr/io.h>
 #include <math.h>
+#include <U8g2lib.h>
+
 
 #define LED_NUM_MAX 30
 
 volatile uint8_t leave_loop = 0;
 volatile int64_t counter = 0;
+
+U8G2_SH1106_128X32_VISIONOX_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
 
 
 
@@ -24,47 +28,67 @@ extern "C"
   void changeTime();
   void confirmTime();
   void setTimeToLed();
+  void sendToDisplay();
   //void timeAsBooleanArray(uint16_t timeInSeconds);
 }
 
-void setup()
+void setup(void)
 {
     pinMode(11, OUTPUT);
-
     pinMode(2, INPUT_PULLUP);
     attachInterrupt(0, changeTime, FALLING);
     pinMode(3, INPUT_PULLUP);
     attachInterrupt(1, confirmTime, FALLING);
-    
-
     sei();
-
     STRIP_SPI_init();
-    //counter = 86400;
     STRIP_show(counter,10,0,0,10);
     counter = counter % 86400;
+    u8g2.begin();
     setTimeToLed();
     delay(100);
-
-
-
     while (leave_loop != 1)
     {
         
     }
-    
-    
-
 };
 
-void loop()
+void loop(void)
 {  
-  counter ++;
-  counter = counter % 86400;
-  setTimeToLed();
-  delay(1000);
+     counter ++;
+    counter = counter % 86400;
+    setTimeToLed();
+    sendToDisplay();
 }
 
+void sendToDisplay()
+{
+    int hours = counter / 3600;
+    int min = (counter % 3600) / 60;
+    int sec = counter % 60;
+
+    char hoursStr[3];
+    char minutesStr[3];
+    char secondsStr[3];
+    sprintf(hoursStr, "%02u", hours);
+    sprintf(minutesStr, "%02u", min);
+    sprintf(secondsStr, "%02u", sec);
+
+    // Clear the display
+  u8g2.clearBuffer();
+  
+  // Draw the time on the display
+  u8g2.setFont(u8g2_font_logisoso16_tn);
+  u8g2.setCursor(0, 30);
+  u8g2.print(hoursStr);
+  u8g2.print(":");
+  u8g2.print(minutesStr);
+  u8g2.print(":");
+  u8g2.print(secondsStr);
+  
+  // Send the buffer to the display
+  u8g2.sendBuffer();
+  delay(1000);
+}
 
 // ein durchgehender ton ist ein starkes signal
 void changeTime(){
@@ -80,7 +104,6 @@ void confirmTime(){
 
 void setTimeToLed(){
     STRIP_show(30,0,0,0,0);
-
 
     int hours = counter / 3600;
     int min = (counter % 3600) / 60;
