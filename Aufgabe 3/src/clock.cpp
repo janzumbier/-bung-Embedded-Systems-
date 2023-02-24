@@ -10,7 +10,7 @@
 #define LED_NUM_MAX 30
 
 volatile uint8_t leave_loop = 0;
-volatile int counter = 0;
+volatile int64_t counter = 0;
 
 
 
@@ -29,15 +29,20 @@ extern "C"
 
 void setup()
 {
+    pinMode(11, OUTPUT);
+
     pinMode(2, INPUT_PULLUP);
     attachInterrupt(0, changeTime, FALLING);
-
     pinMode(3, INPUT_PULLUP);
     attachInterrupt(1, confirmTime, FALLING);
+    
+
     sei();
 
     STRIP_SPI_init();
-    //STRIP_show(counter,10,0,0,10);
+    //counter = 86400;
+    STRIP_show(counter,10,0,0,10);
+    counter = counter % 86400;
     setTimeToLed();
     delay(100);
 
@@ -48,20 +53,26 @@ void setup()
         
     }
     
+    
 
 };
 
 void loop()
 {
-  sei();  
-
+  //sei();  
+  //digitalWrite(11, HIGH);  
   counter ++;
-  setTimeToLed;
+  counter = counter % 86400;
+  setTimeToLed();
   delay(1000);
+  
 }
+
+
 
 void changeTime(){
     counter ++;
+    counter = counter % 86400;
     setTimeToLed();
 }
 
@@ -70,6 +81,9 @@ void confirmTime(){
 }
 
 void setTimeToLed(){
+    STRIP_show(30,0,0,0,0);
+
+
     int hours = counter / 3600;
     int min = (counter % 3600) / 60;
     int sec = counter % 60;
@@ -86,6 +100,7 @@ void setTimeToLed(){
 
     int i = 29;
     int ex = 1;
+
     
     //hours first (lower leds getturnded of)
     while(ex >= 0){
