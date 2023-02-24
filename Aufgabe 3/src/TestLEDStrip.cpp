@@ -1,7 +1,7 @@
 /*
  * your comment
  */
-
+/*/
 #include <Arduino.h>
 #include <avr/io.h>
 
@@ -56,6 +56,7 @@ void loop()
   
 }
 */
+/*
 void loop()
 {
   //LED - ON
@@ -71,3 +72,4 @@ void initStrip()
 {
   STRIP_SPI_init();
 }
+*/
