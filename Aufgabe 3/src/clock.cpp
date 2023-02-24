@@ -55,10 +55,9 @@ void loop()
 {
   sei();  
 
-  //LED - ON
-  STRIP_show(counter, 0, 0, 10, 5);
-  delay(1000);
   counter ++;
+  setTimeToLed;
+  delay(1000);
 }
 
 void changeTime(){
@@ -171,84 +170,3 @@ void setTimeToLed(){
     }
 
 }
-  
-/*
-void timeAsBooleanArray(timeInSeconds: int16_t){
-
-    int hours = timeInSeconds / 3600;
-    int min = (timeInSeconds % 3600) / 60;
-    int sec = timeInSeconds % 60;
-
-    // stunden h1h2 (14:00) ==> h1=1 h2=4
-    int h2 = hours % 10
-    int h1 = (hours - h2) / 10
-    // minuten m1m2 (14:32) ==> m1=3 m2=2
-    int m2 = min % 10
-    int m1 = (min - m2) / 10
-    // sekunden s1s2 (14:32:43) ==> s1=4 s2=3
-    int s2 = sec % 10
-    int s1 = (sec - m2) / 10
-
-    int i = 0
-    int ex = 1
-    //h1
-    while(i<=1){
-        if(h1 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            out[i] = true
-            h1 = h1 - 2^i
-        }
-
-        ex --
-    }
-    //h2
-    ex = 3
-    while(i<=5){
-        if(h2 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            h2 = h2 - 2^ex
-        }
-        ex --
-    }
-    //m1
-    ex = 2
-    while(i<=8){
-        int ex = i-6
-        if(m1 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            m1 = m1 - 2^ex
-        }
-        ex --
-    }
-    //m2
-    ex = 3
-    while(i<=12){
-        int ex = i-9
-        if(m2 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            m2 = m2 - 2^ex
-        }
-        ex --
-    }
-    //s1
-    ex = 2
-    while(i<=15){
-        int ex = i-13
-        if(s1 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            s1 = s1 - 2^ex
-        }
-        ex --
-    }
-    //s2
-    ex = 3
-    while(i<=19){
-        int ex = i-16
-        if(s2 >= 2^ex){
-            STRIP_show(i,1,0,0,5)
-            s2 = s2 - 2^ex
-        }
-        ex --
-    }
-}
-*/
