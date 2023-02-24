@@ -58,22 +58,20 @@ void setup()
 };
 
 void loop()
-{
-  //sei();  
-  //digitalWrite(11, HIGH);  
+{  
   counter ++;
   counter = counter % 86400;
   setTimeToLed();
   delay(1000);
-  
 }
 
 
-
+// ein durchgehender ton ist ein starkes signal
 void changeTime(){
     counter ++;
     counter = counter % 86400;
     setTimeToLed();
+    tone(11, 1);
 }
 
 void confirmTime(){
