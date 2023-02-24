@@ -5,6 +5,7 @@
 
 #include <Arduino.h>
 #include <avr/io.h>
+#include <math.h>
 
 #define LED_NUM_MAX 30
 
@@ -36,7 +37,8 @@ void setup()
     sei();
 
     STRIP_SPI_init();
-    STRIP_show(counter,10,0,0,10);
+    //STRIP_show(counter,10,0,0,10);
+    setTimeToLed();
     delay(100);
 
 
@@ -61,7 +63,7 @@ void loop()
 
 void changeTime(){
     counter ++;
-    STRIP_show(counter,10,0,0,10);
+    setTimeToLed();
 }
 
 void confirmTime(){
@@ -83,14 +85,14 @@ void setTimeToLed(){
     int s2 = sec % 10;
     int s1 = (sec - m2) / 10;
 
-    int i = 30;
+    int i = 29;
     int ex = 1;
     
     //hours first (lower leds getturnded of)
     while(ex >= 0){
-        if(h1 >= 2 ^ ex){
+        if(h1 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            h1 = h1 - 2 ^ ex;
+            h1 = h1 - pow(2,ex);
         }
         ex --;
         i --;
@@ -101,23 +103,26 @@ void setTimeToLed(){
 
     ex = 3;
     while(ex >= 0){
-        if(h2 >= 2 ^ ex){
+        if(h2 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            h2 = h2 - 2 ^ ex;
+            h2 = h2 - pow(2,ex);
         }
         ex --;
         i --;
     }
 
     STRIP_show(i,10,0,0,10);
-    i = i-2;
+    i--;
+    STRIP_show(i,10,0,0,10);
+    i--;
+    
 
     //minutes next (lower leds getturnded of)
-    ex = 2
+    ex = 2;
     while(ex >= 0){
-        if(m1 >= 2 ^ ex){
+        if(m1 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            m1 = m1 - 2 ^ ex;
+            m1 = m1 - pow(2,ex);
         }
         ex --;
         i --;
@@ -128,23 +133,25 @@ void setTimeToLed(){
 
     ex = 3;
     while(ex >= 0){
-        if(m2 >= 2 ^ ex){
+        if(m2 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            m2 = m2 - 2 ^ ex;
+            m2 = m2 - pow(2,ex);
         }
         ex --;
         i --;
     }
 
     STRIP_show(i,10,0,0,10);
-    i = i-2;
+    i--;
+    STRIP_show(i,10,0,0,10);
+    i--;
 
     //seconds next (lower leds getturnded of)
     ex = 2;
     while(ex >= 0){
-        if(s1 >= 2 ^ ex){
+        if(s1 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            s1 = s1 - 2 ^ ex;
+            s1 = s1 - pow(2,ex);
         }
         ex --;
         i --;
@@ -155,16 +162,14 @@ void setTimeToLed(){
 
     ex = 3;
     while(ex >= 0){
-        if(s2 >= 2 ^ ex){
+        if(s2 >= pow(2,ex)){
             STRIP_show(i, 0,0,10,10);
-            s2 = s2 - 2 ^ ex;
+            s2 = s2 - pow(2,ex);
         }
         ex --;
         i --;
     }
 
-    STRIP_show(i,10,0,0,10);
-    i = i-2;
 }
   
 /*
