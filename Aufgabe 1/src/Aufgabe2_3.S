@@ -10,10 +10,53 @@
 
 .global TIMER1_COMPA_vect
 TIMER1_COMPA_vect:
-        rcall setLED
-        rcall setLED
-        inc LED_COUNTER
+        cpi r18, 0
+        BREQ _left
+        BRNE _right
+
+        _right:
+            cpi r19,1
+            BREQ _carryExtendedRight 
+            rcall setLED
+            lsr LED_COUNTER
+            BRCS _rightCarry
         reti
+
+        _left:
+            cpi r19,1
+            BREQ _carryExtendedLeft
+            rcall setLED
+            lsl LED_COUNTER
+            BRCS _leftCarry
+        reti
+
+        _rightCarry:
+            ;rcall setLED
+            ldi r18,0
+            ldi r19,1
+            rcall setLED
+        reti
+
+        _leftCarry:
+            ;rcall setLED
+            ldi r18,1
+            ldi r19,1
+            rcall setLED
+        reti
+
+        _carryExtendedRight:
+            rcall setLED
+            rol LED_COUNTER
+            ldi r19,0
+        reti
+
+        _carryExtendedLeft:
+             rcall setLED
+             ror LED_COUNTER
+             ldi r19,0
+        reti
+
+
 .section .text
 .global main
 
@@ -25,8 +68,10 @@ main:
     ser TEMP
     out PORTC, TEMP
     clr LED_COUNTER
-    inc LED_COUNTER
+    ldi LED_COUNTER,1
     cli
+    ldi r18,0
+    ldi r19,0
     ;16MHz/1024=15625Hz mit OCR1A=31249 Interrupt alle 2s
     ldi TEMP, 0x7A
     STS OCR1AH, TEMP
@@ -54,26 +99,4 @@ setLED:
         com LED_COUNTER
 ret
 
- _loopRightbefore:
-        rcall wait_400ms
-        rcall setLED
-        ror LED_COUNTER
-        _loopRight:
-            rcall wait_400ms
-            rcall setLED
-            lsr LED_COUNTER
-            brcs _loopLeftBefore
-        rjmp _loopRight
-
-        ret
-    _loopLeftBefore:
-        rcall wait_400ms
-        rcall setLED
-        rol LED_COUNTER
-        _loopLeft:
-            rcall wait_400ms
-            rcall setLED
-            lsl LED_COUNTER
-            brcs _loopRightbefore
-        rjmp _loopLeft
-    ret
+ 
