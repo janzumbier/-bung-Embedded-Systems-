@@ -67,14 +67,14 @@ main:
     cli
     ldi r18,0
     ldi r19,0
-    ;16MHz/1024=15625Hz mit OCR1A=31249 Interrupt alle 2s
-    ldi TEMP, 0x7A
-    STS OCR1AH, TEMP
-    ldi TEMP, 0x11
-    STS OCR1AL, TEMP
+    ;400ms 
+    ldi r24, lo8(31250)
+    ldi r25, hi8(31250)
+    STS OCR1AH, r25
+    STS OCR1AL, r24
     ; CTC Modus einschalten
-    ; Vorteiler auf 1024
-    ldi TEMP, (1 << WGM12)|(1 << CS10)|(1 << CS12)
+    ; Vorteiler auf 256
+    ldi TEMP, (1 << WGM12)|(1 << CS12)
     STS TCCR1B, TEMP
 
     ldi TEMP, (1 << OCIE1A) ; OCIE1A: Interrupt bei Timer Compare
