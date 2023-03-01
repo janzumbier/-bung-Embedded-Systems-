@@ -7,17 +7,19 @@
 #include <avr/io.h>
 #include <math.h>
 #include <U8g2lib.h>
+#include <time.h>
 
 
 #define LED_NUM_MAX 30
 
 volatile uint8_t leave_loop = 0;
-volatile int64_t counter = 0;
-
+volatile int64_t counter = 86390;
+volatile int16_t day = 28;
+volatile int16_t month = 2;
+volatile int16_t year = 2023;
+int days_in_month[]={31,28,31,30,31,30,31,31,30,31,30,31};
+int days_in_month_schalt[] = {31,29,31,30,31,30,31,31,30,31,30,31};
 U8G2_SH1106_128X32_VISIONOX_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
-
-
-
 extern "C"
 {
   // function prototypes
@@ -42,29 +44,68 @@ void setup(void)
     sei();
     STRIP_SPI_init();
     STRIP_show(counter,10,0,0,10);
+    if(counter == 86400){
+        day++;
+    }
     counter = counter % 86400;
+
+
+
     u8g2.begin();
     setTimeToLed();
     delay(100);
     while (leave_loop != 1)
     {
-        
+        sendToDisplay();
+        delay(100);
     }
 };
 
 void loop(void)
 {  
-     counter ++;
+    counter ++;
+    if(counter == 86400){
+        day++;
+    }
     counter = counter % 86400;
     setTimeToLed();
     sendToDisplay();
+    delay(1000);
 }
 
 void sendToDisplay()
 {
+    
     int hours = counter / 3600;
     int min = (counter % 3600) / 60;
     int sec = counter % 60;
+    
+    if(day == 32 && month == 12){
+        year = year + 1;
+        month = 1;
+        day = 1;
+    }
+    if(((year% 4 == 0 && year%100 != 0) || year%400 == 0))
+    {
+        if(day == days_in_month_schalt[month-1]+1)
+        {
+            day = 1;
+            month = month + 1;
+        }
+        
+    } 
+    else 
+    {
+        if(day == days_in_month[month-1]+1)
+        {
+            day = 1;
+            month = month + 1;
+        }
+
+    }
+
+
+    
 
     char hoursStr[3];
     char minutesStr[3];
@@ -73,21 +114,37 @@ void sendToDisplay()
     sprintf(minutesStr, "%02u", min);
     sprintf(secondsStr, "%02u", sec);
 
+    char yearStr[5];
+    char monthStr[3];
+    char dayStr[3];
+    sprintf(yearStr, "%02u", year);
+    sprintf(monthStr, "%02u", month);
+    sprintf(dayStr, "%02u", day);
+
     // Clear the display
-  u8g2.clearBuffer();
+    u8g2.clearBuffer();
   
   // Draw the time on the display
-  u8g2.setFont(u8g2_font_logisoso16_tn);
-  u8g2.setCursor(0, 30);
-  u8g2.print(hoursStr);
-  u8g2.print(":");
-  u8g2.print(minutesStr);
-  u8g2.print(":");
-  u8g2.print(secondsStr);
+    u8g2.setFont(u8g2_font_tinytim_tr);
+    u8g2.setCursor(0, 10);
+    u8g2.print(hoursStr);
+    u8g2.print(":");
+    u8g2.print(minutesStr);
+    u8g2.print(":");
+    u8g2.print(secondsStr);
+
+    u8g2.setCursor(0, 30);
+    u8g2.print(dayStr);
+    u8g2.print(".");
+    u8g2.print(monthStr);
+    u8g2.print(".");
+    u8g2.print(yearStr);
+
+
+
   
   // Send the buffer to the display
   u8g2.sendBuffer();
-  delay(1000);
 }
 
 // ein durchgehender ton ist ein starkes signal
