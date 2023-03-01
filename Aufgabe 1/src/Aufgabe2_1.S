@@ -30,7 +30,7 @@ main:
     rcall setLED
     
     _mloop:
-        rcall wait_10ms
+        rcall wait_400ms
         rcall setLED
         ;increment LED_COUNTER
 	    inc LED_COUNTER
@@ -47,15 +47,17 @@ setLED:
 ret
 
 wait_10ms:
-    ldi r25, hi8 (160000)
-    ldi r24, lo8 (160000)
+    ; Initialize loop counter
+    ldi r25, hi8 (40000) 
+    ldi r24, lo8 (40000)
     wloop: 
      sbiw r24, 1
     brne wloop
+; Delay complete
 ret
 
 wait_400ms:
-    ldi r18, 10
+    ldi r18, 40
     aloop:
         rcall wait_10ms
         dec r18

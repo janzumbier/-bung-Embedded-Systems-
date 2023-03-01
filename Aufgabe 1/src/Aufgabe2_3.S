@@ -26,8 +26,6 @@ main:
     out PORTC, TEMP
     clr LED_COUNTER
     inc LED_COUNTER
-    
-
     cli
     ;16MHz/1024=15625Hz mit OCR1A=31249 Interrupt alle 2s
     ldi TEMP, 0x7A
@@ -46,7 +44,7 @@ main:
 
     LOOP:
         rjmp LOOP
-
+; ##############################################################################################
 setLED:
         ;One’s Complement
         com	LED_COUNTER			
@@ -54,4 +52,28 @@ setLED:
         out PORTC, LED_COUNTER
         ;One’s Complement
         com LED_COUNTER
+ret
+
+ _loopRightbefore:
+        rcall wait_400ms
+        rcall setLED
+        ror LED_COUNTER
+        _loopRight:
+            rcall wait_400ms
+            rcall setLED
+            lsr LED_COUNTER
+            brcs _loopLeftBefore
+        rjmp _loopRight
+
         ret
+    _loopLeftBefore:
+        rcall wait_400ms
+        rcall setLED
+        rol LED_COUNTER
+        _loopLeft:
+            rcall wait_400ms
+            rcall setLED
+            lsl LED_COUNTER
+            brcs _loopRightbefore
+        rjmp _loopLeft
+    ret

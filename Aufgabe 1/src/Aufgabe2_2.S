@@ -57,18 +57,21 @@ main:
     ret
 
     ;******************************wait functions******************************
-    wait_10ms:
-        ldi r25, hi8 (160000)
-        ldi r24, lo8 (160000)
-        wloop: 
-        sbiw r24, 1
-        brne wloop
-    ret
+   
+   wait_10ms:
+    ; Initialize loop counter
+    ldi r25, hi8 (40000) 
+    ldi r24, lo8 (40000)
+    wloop: 
+     sbiw r24, 1
+    brne wloop
+; Delay complete
+ret
 
-    wait_400ms:
-        ldi r18, 10
-        aloop:
-            rcall wait_10ms
-            dec r18
-        brne aloop
-    ret
+wait_400ms:
+    ldi r18, 40
+    aloop:
+        rcall wait_10ms
+        dec r18
+    brne aloop
+ret
