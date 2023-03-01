@@ -6,6 +6,9 @@
 ;define a name for Register 16 and 17
 #define TEMP R16
 #define LED_COUNTER R17
+;0=left 1=r
+#define dir R18
+#define carrySet R19
 
 
 .global TIMER1_COMPA_vect
@@ -14,48 +17,40 @@ TIMER1_COMPA_vect:
         BREQ _left
         BRNE _right
 
-        _right:
-            cpi r19,1
-            BREQ _carryExtendedRight 
-            rcall setLED
-            lsr LED_COUNTER
-            BRCS _rightCarry
-        reti
-
         _left:
-            cpi r19,1
-            BREQ _carryExtendedLeft
-            rcall setLED
-            lsl LED_COUNTER
-            BRCS _leftCarry
-        reti
+                cpi carrySet, 0
+                BREQ _lshift
+                rcall setLED
+                rol LED_COUNTER
+                ldi carrySet, 0
+                reti
+        _lshift:
+                rcall setLED
+                lsl LED_COUNTER
+                brcs _lcarry
+                reti
+        _lcarry:
+                ldi carrySet, 1
+                ldi dir, 1
+                reti
 
-        _rightCarry:
-            ;rcall setLED
-            ldi r18,0
-            ldi r19,1
-            rcall setLED
-        reti
 
-        _leftCarry:
-            ;rcall setLED
-            ldi r18,1
-            ldi r19,1
-            rcall setLED
-        reti
-
-        _carryExtendedRight:
-            rcall setLED
-            rol LED_COUNTER
-            ldi r19,0
-        reti
-
-        _carryExtendedLeft:
-             rcall setLED
-             ror LED_COUNTER
-             ldi r19,0
-        reti
-
+        _right:
+                cpi carrySet, 0
+                BREQ _rshift
+                rcall setLED
+                ror LED_COUNTER
+                ldi carrySet, 0
+                reti
+        _rshift:
+                rcall setLED
+                lsr LED_COUNTER
+                brcs _rcarry
+                reti
+        _rcarry:
+                ldi carrySet, 1
+                ldi dir, 0
+                reti
 
 .section .text
 .global main
