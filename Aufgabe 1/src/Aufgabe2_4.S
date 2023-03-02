@@ -109,15 +109,14 @@ main:
     ldi r18,0
     ldi r19,0
     ;16MHz/1024=15625Hz mit OCR1A=31249 Interrupt alle 2s
-    ldi TEMP2, hi8(31250)
+    ldi TEMP2, hi8(24999)
     STS OCR1AH, TEMP2
-    ldi TEMP2, lo8(31250)
+    ldi TEMP2, lo8(24999)
     STS OCR1AL, TEMP2
     ; CTC Modus einschalten
     ; Vorteiler auf 1024
     ldi TEMP2, (1 << WGM12)|(1 << CS12)
     STS TCCR1B, TEMP2
-
     ldi TEMP2, (1 << OCIE1A) ; OCIE1A: Interrupt bei Timer Compare
     STS TIMSK1, TEMP2
     sei
