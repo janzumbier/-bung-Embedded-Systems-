@@ -16,8 +16,61 @@
 
 ;define a name for Register 16 and 17
 #define TEMP R16
+#define TEMP2 R21
 #define LED_COUNTER R17
 #define isInterupt R20
+
+;0=left 1=r
+#define dir R18
+#define carrySet R19
+
+
+.global TIMER1_COMPA_vect
+TIMER1_COMPA_vect:
+        cpi isInterupt, 1
+        breq _intSet
+        cpi r18, 0
+        BREQ _left
+        BRNE _right
+
+        _left:
+                cpi carrySet, 0
+                BREQ _lshift
+                rcall setLED
+                rol LED_COUNTER
+                ldi carrySet, 0
+                reti
+        _lshift:
+                rcall setLED
+                lsl LED_COUNTER
+                brcs _lcarry
+                reti
+        _lcarry:
+                ldi carrySet, 1
+                ldi dir, 1
+                reti
+
+
+        _right:
+                cpi carrySet, 0
+                BREQ _rshift
+                rcall setLED
+                ror LED_COUNTER
+                ldi carrySet, 0
+                reti
+        _rshift:
+                rcall setLED
+                lsr LED_COUNTER
+                brcs _rcarry
+                reti
+        _rcarry:
+                ldi carrySet, 1
+                ldi dir, 0
+                reti
+        _intSet:
+            reti
+.section .text
+.global main
 
 .global INT0_vect
 INT0_vect:
@@ -45,47 +98,32 @@ main:
     out PORTC, TEMP
     clr LED_COUNTER
     inc LED_COUNTER 
-    ;endless loop
     rcall setLED
+
+
     cli
     ldi TEMP, (1<<ISC01) | (1<<ISC00)
     sts EICRA, TEMP
     ldi TEMP, (1<<INT0) | (1<<INT1)
     out EIMSK, TEMP
+    ldi r18,0
+    ldi r19,0
+    ;16MHz/1024=15625Hz mit OCR1A=31249 Interrupt alle 2s
+    ldi TEMP2, hi8(31250)
+    STS OCR1AH, TEMP2
+    ldi TEMP2, lo8(31250)
+    STS OCR1AL, TEMP2
+    ; CTC Modus einschalten
+    ; Vorteiler auf 1024
+    ldi TEMP2, (1 << WGM12)|(1 << CS12)
+    STS TCCR1B, TEMP2
+
+    ldi TEMP2, (1 << OCIE1A) ; OCIE1A: Interrupt bei Timer Compare
+    STS TIMSK1, TEMP2
     sei
 
-;*******************************running light********************************
-    _loopRightbefore:
-        rcall wait_400ms
-        rcall setLED
-        ror LED_COUNTER
-        _loopRight:
-            rcall wait_400ms
-            cpi isInterupt, 1
-            brne noInt
-            rcall _loopInt0
-        noInt:
-            rcall setLED
-            lsr LED_COUNTER
-            brcs _loopLeftBefore
-        rjmp _loopRight
-
-    ret
-    _loopLeftBefore:
-        rcall wait_400ms
-        rcall setLED
-        rol LED_COUNTER
-        _loopLeft:
-            rcall wait_400ms
-            cpi isInterupt, 1
-            brne noInt2
-            rcall _loopInt0
-        noInt2:
-            rcall setLED
-            lsl LED_COUNTER
-            brcs _loopRightbefore
-        rjmp _loopLeft
-    ret
+    LOOP:
+        rjmp LOOP
 
     ;****************************OUT LED*****************************************
     setLED:
@@ -97,23 +135,6 @@ main:
         ;One’s Complement
         com LED_COUNTER
         
-    ret
-
-    ;******************************wait functions******************************
-    wait_10ms:
-        ldi r25, hi8 (160000)
-        ldi r24, lo8 (160000)
-        wloop: 
-        sbiw r24, 1
-        brne wloop
-    ret
-
-    wait_400ms:
-        ldi r18, 10
-        aloop:
-            rcall wait_10ms
-            dec r18
-        brne aloop
     ret
 
 _loopInt0:
