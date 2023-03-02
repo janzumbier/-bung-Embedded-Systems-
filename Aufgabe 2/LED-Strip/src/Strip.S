@@ -1,5 +1,3 @@
-;your comment
-
 ;The following is needed to subtract 
 ;0x20 from I/O addresses
 #define __SFR_OFFSET 0
@@ -50,8 +48,9 @@ STRIP_show:
   ;save registries
   mov r26, r24           
   mov r27, r25
-  mov r28, r24
-  mov r29, r25
+
+  mov r30, r24
+  mov r31, r25
 
   ; 4*8 Zero Bytes
   ldi r24, 0
@@ -90,8 +89,8 @@ _frame:
   mov r24, r22
   rcall STRIP_com
   ;call END_frame
-  mov r28, r24
-  mov r29, r25
+  mov r30, r24
+  mov r31, r25
 
   rcall END_frame
   ret
@@ -100,19 +99,26 @@ _frame:
  ;Parameter R25, R24 (MSB, LSB)
 .global END_frame
 END_frame:
-  mov r24, r26
-  mov r25, r27
-  ldi r24,0
-
-    _divide:
-      inc r24
-      sbiw r26, 16
-      cpc r26, 0
-      breq _result
-      brmi _result
-    rjmp _divide
+  mov r30, r24 
+  mov r31, r25
+  ldi r24, 0
+  
+  _divide:
+    inc r24
+    sbiw r30, 16
+    cpc r30, 0
+    breq _result
+    brmi _result
+  rjmp _divide
     
-    _result:
+  _result:
+    mov r30, r24
+    ldi r24, 0
+    _sendBytes:
       rcall STRIP_com
+      dec r30
+    brne _sendBytes
 ret
  
+
+;###

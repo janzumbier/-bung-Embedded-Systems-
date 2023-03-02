@@ -14,8 +14,8 @@
 
 volatile uint8_t leave_loop = 0;
 volatile int64_t counter = 86390;
-volatile int16_t day = 28;
-volatile int16_t month = 2;
+volatile int16_t day = 31;
+volatile int16_t month = 12;
 volatile int16_t year = 2023;
 int days_in_month[]={31,28,31,30,31,30,31,31,30,31,30,31};
 int days_in_month_schalt[] = {31,29,31,30,31,30,31,31,30,31,30,31};

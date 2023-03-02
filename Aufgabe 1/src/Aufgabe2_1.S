@@ -52,7 +52,7 @@ wait_10ms:
     ldi r24, lo8 (40000)
     wloop:       ; 1 cyc
      sbiw r24, 1 ; 1 cyc
-    brne wloop 2; 2 cyc
+    brne wloop   ; 2 cyc
 ; Delay complete
 ret
 

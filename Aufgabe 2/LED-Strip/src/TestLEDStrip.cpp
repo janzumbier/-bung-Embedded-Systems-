@@ -22,7 +22,7 @@ void setup()
 {
   initStrip();
 }
-/*
+
 void loop()
 {
   // LED-ON
@@ -55,8 +55,9 @@ void loop()
   delay(500);
   
 }
-*/
-void loop()
+
+
+/*void loop()
 {
   //LED - ON
   STRIP_show(LED_NUM_MAX - 1, 0, 0, 10, 5);
@@ -66,6 +67,8 @@ void loop()
   STRIP_show(LED_NUM_MAX, 0, 0, 0, 0);
   delay(500);
 }
+*/
+
 
 void initStrip()
 {
