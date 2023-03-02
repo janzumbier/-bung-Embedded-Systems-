@@ -50,6 +50,8 @@ STRIP_show:
   ;save registries
   mov r26, r24           
   mov r27, r25
+  mov r28, r24
+  mov r29, r25
 
   ; 4*8 Zero Bytes
   ldi r24, 0
@@ -68,7 +70,7 @@ STRIP_show:
     rcall STRIP_com
     rcall STRIP_com
     rcall STRIP_com
-    dec r26
+    sbiw r26,1
   brne _loop
 
   ;Sending data for frame
@@ -78,7 +80,6 @@ _frame:
   add r24, r16
   rcall STRIP_com
   ; sending color
-
   ;sending blue
   mov r24, r18
   rcall STRIP_com
@@ -88,8 +89,10 @@ _frame:
   ;sending red
   mov r24, r22
   rcall STRIP_com
+  ;call END_frame
+  mov r28, r24
+  mov r29, r25
 
-  ;call END_frame 
   rcall END_frame
   ret
 
@@ -97,8 +100,19 @@ _frame:
  ;Parameter R25, R24 (MSB, LSB)
 .global END_frame
 END_frame:
-  ldi r24, 0
-  rcall STRIP_com
-  rcall STRIP_com
-  ret
+  mov r24, r26
+  mov r25, r27
+  ldi r24,0
+
+    _divide:
+      inc r24
+      sbiw r26, 16
+      cpc r26, 0
+      breq _result
+      brmi _result
+    rjmp _divide
+    
+    _result:
+      rcall STRIP_com
+ret
  

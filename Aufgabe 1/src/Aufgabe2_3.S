@@ -68,8 +68,8 @@ main:
     ldi r18,0
     ldi r19,0
     ;400ms 
-    ldi r24, lo8(31250)
-    ldi r25, hi8(31250)
+    ldi r24, lo8(24999)
+    ldi r25, hi8(24999)
     STS OCR1AH, r25
     STS OCR1AL, r24
     ; CTC Modus einschalten
@@ -80,8 +80,6 @@ main:
     ldi TEMP, (1 << OCIE1A) ; OCIE1A: Interrupt bei Timer Compare
     STS TIMSK1, TEMP
     sei
-    
-
     LOOP:
         rjmp LOOP
 ; ##############################################################################################

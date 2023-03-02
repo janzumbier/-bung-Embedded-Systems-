@@ -47,12 +47,12 @@ setLED:
 ret
 
 wait_10ms:
-    ; Initialize loop counter
+    ; Initialize loop counter 4*40000 = 160000
     ldi r25, hi8 (40000) 
     ldi r24, lo8 (40000)
-    wloop: 
-     sbiw r24, 1
-    brne wloop
+    wloop:       ; 1 cyc
+     sbiw r24, 1 ; 1 cyc
+    brne wloop 2; 2 cyc
 ; Delay complete
 ret
 

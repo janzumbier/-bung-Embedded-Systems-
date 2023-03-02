@@ -43,7 +43,7 @@ main:
             brcs _loopRightbefore
         rjmp _loopLeft
     ret
-
+    
     ;****************************OUT LED*****************************************
     setLED:
         
