@@ -1,3 +1,6 @@
+
+;Jan Biermann 1202245
+;Philipp Schwerdfeger 1201714
 /* The following is needed to subtract 0x20 from I/O addresses */ 
 #define __SFR_OFFSET 0 
 

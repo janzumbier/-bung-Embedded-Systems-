@@ -1,10 +1,8 @@
-/*
- * your comment
- */
+//Jan Biermann 1202245
+//Philipp Schwerdfeger 1201714
 
 #include <Arduino.h>
 #include <avr/io.h>
-
 #define LED_NUM_MAX 30
 
 extern "C"

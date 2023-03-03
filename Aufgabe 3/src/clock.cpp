@@ -1,7 +1,6 @@
 
-/*
- * your comment
- */
+//Jan Biermann 1202245
+//Philipp Schwerdfeger 1201714
 
 #include <Arduino.h>
 #include <avr/io.h>
